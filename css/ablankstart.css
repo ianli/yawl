@@ -1,0 +1,75 @@
+/*
+ * A Blank Start template
+ * http://ianli.com/templates/blankstart/
+ *
+ * Copyright 2010, Ian Li (http://ianli.com)
+ * Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php).
+ */
+
+/* Defaults */
+html, body {
+	height:100%;
+}
+body {
+	margin:0;
+	padding:0;
+	border-top:5px solid #000;
+}
+#wrap {
+	position:relative;	/* To position footer to the bottom */
+	min-height:100%;
+}
+a,
+a:link,
+a:visited {
+	color:#f30;
+	text-decoration:none;
+}
+a:active,
+a:hover {
+	text-decoration:underline;
+}
+
+/* Blueprint overrides */
+hr { background:#ccc; color:#ccc; }
+.container {
+	position:relative;
+}
+
+/* Body */
+#bd_wrap {
+	padding-top:30px;
+	padding-bottom:140px;	/* Height of the footer + some padding */
+}
+#bd_wrap h1,
+#bd_wrap h2,
+#bd_wrap h3,
+#bd_wrap h4,
+#bd_wrap h5,
+#bd_wrap h6 {
+	font-weight:bold;
+	letter-spacing:-0.04em;
+	line-height:1em;
+}
+#bd_wrap h1 { font-size:28px; }
+#bd_wrap h2 { font-size:20px; }
+#bd_wrap h3 { font-size:17px; }
+#bd_wrap h4 { font-size:15px; }
+#bd_wrap h5 { font-size:13px; }
+#bd_wrap h6 { font-size:13px; font-weight:normal; font-style:italic; }
+
+#bd_wrap pre.code {
+	padding:5px;
+	background-color:#eee;
+}
+
+/* Footer */
+#ft_wrap {
+	position:absolute;	/* Place the footer to the bottom */
+	bottom:0;
+	padding:5px;
+	width:100%;
+	height:90px;		/* Height: height - (padding x 2) */
+	background-color:#000;
+	color:#fff;
+}

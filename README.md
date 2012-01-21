@@ -24,12 +24,17 @@ And constructed with the following guidelines:
 For more information on SemVer, please visit http://semver.org/.
 
 
-History
--------
+Versions
+--------
+
+*0.1.0*	- November 16, 2010
+
+- Class-based implementation.
+- Removed dependency on configuration file.
 
 *0.0.1* - November 8, 2010
 
-Initial version of YAWL. Not working, but tagged for historical purposes.
+- Initial version of YAWL. Not working, but tagged for historical purposes.
 
 
 License
