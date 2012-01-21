@@ -1,0 +1,18 @@
+/*!
+ * Default stylesheet for YAWL.
+ */
+ 
+.hero-unit {
+  margin-top:20px;
+}
+  .hero-unit > h1 > span {
+    font-weight:normal;
+  }
+  
+#content {
+  min-height:200px;
+}
+
+footer {
+  text-align:center;
+}

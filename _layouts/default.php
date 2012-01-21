@@ -1,46 +1,46 @@
-<!DOCTYPE html> 
-<!--
- * A Blank Start design
- * http://ianli.com/templates/ablankstart/
- *
- * Copyright 2010, Ian Li (http://ianli.com)
- * Licensed under the MIT license (http://www.opensource.org/licenses/mit-license.php).
---> 
-<html lang="en"> 
-<head> 
-	<meta charset="utf-8" /> 
+<!DOCTYPE html>
+<html> 
+<head>
 	<title><?= raft("title") ?></title>
- 
-	<!--[if IE]>
-		<script src="js/html5shiv.js"></script><![endif]--> 
-	<!--[if lt IE 9]>
-		<script src="js/IE9.js" type="text/javascript"></script><![endif]--> 
-
-	<link rel="stylesheet" href="css/cw15gw20cc24/screen.css" type="text/css" media="screen, projection" />
-	<link rel="stylesheet" href="css/cw15gw20cc24/print.css" type="text/css" media="print" />
-	<!--[if IE]><link rel="stylesheet" href="css/cw15gw20cc24/ie.css" type="text/css" media="screen, projection" /><![endif]-->
 	
-	<link rel="stylesheet" href="css/ablankstart.css" type="text/css" />
+	<!-- UTF-8 (Unicode) encoding -->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  
+  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css" />
+	
+	<link rel="stylesheet" href="css/default.css" type="text/css" />
 
 	<?= raft("head") ?>
 </head>
 <body>
 
-<div id="wrap">
-<div id="bd_wrap">
-	<div class="container">
-		<?= raft("content") ?>
-	</div>
+<div class="container">
+  <div class="row">
+    <div class="offset3 span10">
+      <div class="hero-unit">
+        <h1>YAWL <span>&amp; Others!</span></h1>
+        <p>
+          A demo of YAWL, a very simple blogging platform in PHP.
+        </p>
+      </div>
+      
+      <div id="content">
+        <?= raft("content") ?>
+      </div>
+      
+      <footer>
+          Copyright 2012 <a href="http://ianli.com">Ian Li</a>.
+          Licensed under <a href="http://www.opensource.org/licenses/mit-license.php">the MIT License</a>.
+      </footer>
+    </div>
+  </div>
 </div>
-
-<div id="ft_wrap">
-	<div class="container">
-		<?= raft("ft") ?>
-	</div>
-</div>
-</div>
-
-<?= raft("js") ?>
 
 </body>
 </html>
