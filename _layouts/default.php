@@ -1,4 +1,3 @@
-<?php include_once("php/raft.php"); ?>
 <!DOCTYPE html> 
 <!--
  * A Blank Start design
