@@ -54,23 +54,29 @@ Layouts in YAWL are written in PHP and use RAFT to access variables to display. 
 
 __Page Variables__
 
-| Variable | Description |
-| @page.layout@ | The layout used by the page |
-| @page.title@ | The title of the page |
-| @page.content@ | The content of the page |
-| @page.date@ | The date associated with the page |
-| @page.extension@ | The extension of the file from which this page was processed |
-| @page.year@ | The year of the page |
-| @page.month@ | The month of the page |
-| @page.day@ | The day of the page |
-| @page.content@ | The content of the page |
+```text
+Variable        Description
+--------        -----------
+page.layout     The layout used by the page
+page.title      The title of the page
+page.content    The content of the page
+page.date       The date associated with the page
+page.extension  The extension of the file from which this page was processed
+page.year       The year of the page
+page.month      The month of the page
+page.day        The day of the page
+page.content    The content of the page
+```
 
 __Site Variables__
 
-| Variable | Description |
-| @site.pages@ | All the _published_ pages processed by YAWL |
-| @site.posts@ | All the _published_ posts processed by YAWL. In reverse chronological order |
-
+```text
+Variable        Description
+--------        -----------
+site.pages      All the *published* pages processed by YAWL
+site.posts      All the *published* posts processed by YAWL. 
+                In reverse chronological order
+```
 
 File Structure
 --------------
