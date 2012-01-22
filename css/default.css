@@ -3,7 +3,7 @@
  */
  
 .hero-unit {
-  margin-top:20px;
+  margin:20px 0 20px;
 }
   .hero-unit > h1 > span {
     font-weight:normal;
@@ -15,4 +15,9 @@
 
 footer {
   text-align:center;
+}
+
+span.separator {
+  margin:0 5px;
+  color:#999;
 }
