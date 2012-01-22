@@ -158,8 +158,8 @@ Versions
 - Complete rewrite.
 - Removed dependency from JIFF.
 - More similar to Jekyll than previous versions
--- Uses front matter.
--- Properties are extracted from filenames.
+    - Uses front matter.
+    - Properties are extracted from filenames.
 - Added support for PHP pages/posts.
 - Differentiated concepts between pages and posts.
 - Added `published` to the front matter to allow drafts.
