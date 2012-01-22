@@ -1,14 +1,13 @@
 ---
-title: Skiff
+title: As jiffy as a skiff
 tags: simple
 ---
-<h2>Skiff</h2>
-<p>
-  2010 November 13
-</p>
-<p>
+## As jiffy as a skiff
+
+2010 November 13
+
+From [Wikipedia](http://en.wikipedia.org/wiki/Skiff):
+
 The term skiff is a type of small boat.
-</p>
-<p>
-The word is related to ship and has a complicated etymology: "skiff" comes from the Middle English skif, which derives from the Old French esquif, which in turn derives from the Old Italian schifo, which is itself of Germanic origin (German Schiff). "Ship" comes from the Old English "scip", which has the same Germanic predecessor.
-</p>
+
+The word is related to ship and has a complicated etymology: "skiff" comes from the Middle English _skif_, which derives from the Old French _esquif_, which in turn derives from the Old Italian _schifo_, which is itself of Germanic origin (German _Schiff_). "Ship" comes from the Old English "scip", which has the same Germanic predecessor.

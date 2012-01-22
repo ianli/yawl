@@ -2,10 +2,10 @@
 title: Raft
 tags: simple
 ---
-<h2>Raft</h2>
-<p>
-  2010 November 12
-</p>
-<p>
+h2. Raft
+
+2010 November 12
+
+From "Wikipedia":http://en.wikipedia.org/wiki/Raft:
+
 A raft is any flat structure for support or transportation over water. It is the most basic of boat design, characterized by the absence of a hull. Although there are cross-over boat types that blur this definition, rafts are usually kept afloat by using any combination of buoyant materials such as wood, sealed barrels, or inflated air chambers (such as pontoons), and are typically not propelled by an engine.
-</p>
