@@ -80,6 +80,14 @@ function array_merge_special() {
   return $merged;
 }
 
+function reverse_chronological_cmp($a, $b) {
+  if ($a['date'] == $b['date']) {
+    return 0;
+  }
+  
+  return ($a['date'] > $b['date']) ? -1 : 1;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 ////////// DIRECTORY FUNCTIONS ///////////////////////////////////////////////
@@ -141,7 +149,7 @@ function contents_last_modified($dir) {
 
 
 //////////////////////////////////////////////////////////////////////////////
-////////// PAGE FUNCTIONS ////////////////////////////////////////////////////
+////////// PAGE PROPERTIES FUNCTIONS /////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
 function get_page_properties($filename) {
@@ -162,9 +170,14 @@ function get_page_properties($filename) {
   
   if ($filename_properties['extension'] == 'php') {
     
-    // PHP file must generate values 
-    // for $front_matter_properties and $content
+    // PHP file must assign values to $front_matter and $content.
     include($filename);
+    
+    return array_merge_special(
+            $default_properties,
+            $filename_properties,
+            $front_matter,
+            array('content' => $content));
     
   } else {    
     
@@ -175,14 +188,14 @@ function get_page_properties($filename) {
     
     // Properties from the front matter.
     $front_matter_properties = get_front_matter_properties($front_matter);
+    
+    // Merge the properties.
+    return array_merge_special(
+            $default_properties,
+            $filename_properties,
+            $front_matter_properties,
+            array('content' => $content));
   }
-  
-  // Merge the properties.
-  return array_merge_special(
-          $default_properties,
-          $filename_properties,
-          $front_matter_properties,
-          array('content' => $content));
 }
 
 function get_page_filename_properties($filename) {
@@ -217,43 +230,13 @@ function get_page_filename_properties($filename) {
   }
 }
 
-function generate_page_or_post($properties) {
-  global $raft;
-  
-  $raft = $properties;
-  
-  // Set the content based on the extension.
-  switch ($properties['extension']) {
-    case 'php':
-      ob_start();
-      $properties['content']();
-      $raft['content'] = ob_get_contents();
-      ob_end_clean();
-      break;
-    case 'html':
-    case 'htm':
-    default:
-      $raft['content'] = $properties['content'];
-      break;
-  }
-  
-  // Generate the page.
-  ob_start();
-  include('_layouts/' . $raft['layout'] . '.php');
-  $html = ob_get_contents();
-  ob_end_clean();
-  
-  // Store the page.
-  $permalink = $properties['permalink'];
-  file_put_contents("_site/$permalink", $html);
-}
-
 
 //////////////////////////////////////////////////////////////////////////////
-////////// POST FUNCTIONS ////////////////////////////////////////////////////
+////////// POST PROPERTIES FUNCTIONS /////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
 // Process the post.
+// $filename  string  The filename
 function get_post_properties($filename) {
   // Properties from the filename.
   $filename_properties = get_post_filename_properties($filename);
@@ -285,6 +268,7 @@ function get_post_properties($filename) {
 }
 
 // Get properties from the filename.
+// $filename  string  The filename
 function get_post_filename_properties($filename) {
   // TODO: Add one-level subfolder used as category
   $regex = "/^" 
@@ -330,6 +314,7 @@ function get_post_filename_properties($filename) {
 //////////////////////////////////////////////////////////////////////////////
 
 // Get the front matter and content from the file.
+// $file  A string containing the contents of a file.
 function get_front_matter_and_content($file) {
   // Match the file. The modes on the regex are:
   // * i - case-insensitive
@@ -345,6 +330,7 @@ function get_front_matter_and_content($file) {
 }
 
 // Get properties from the front matter.
+// $front_matter  A string representing the front matter.
 function get_front_matter_properties($front_matter) {
   // Empty set of properties (default).
   $properties = array();
@@ -395,6 +381,62 @@ function get_front_matter_properties($front_matter) {
 
 
 //////////////////////////////////////////////////////////////////////////////
+////////// GENERATION FUNCTIONS //////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+function generate_page_or_post($page_properties, $site_properties) {
+  global $raft;
+  
+  foreach ($page_properties as $key => $value) {
+    $raft["page.$key"] = $value;
+  }
+  
+  foreach ($site_properties as $key => $value) {
+    $raft["site.$key"] = $value;
+  }
+  
+  // Set the content based on the extension.
+  switch ($page_properties['extension']) {
+    case 'php':
+      ob_start();
+      $page_properties['content']();
+      $raft['page.content'] = ob_get_contents();
+      ob_end_clean();
+      break;
+    case 'html':
+    case 'htm':
+    default:
+      $raft['page.content'] = $page_properties['content'];
+      break;
+  }
+  
+  // Generate the page.
+  ob_start();
+  include('_layouts/' . $raft['page.layout'] . '.php');
+  $html = ob_get_contents();
+  ob_end_clean();
+  
+  // Store the page.
+  $permalink = $page_properties['permalink'];
+  file_put_contents("_site/$permalink", $html);
+}
+
+function generate_site($site_properties) {
+  if ($posts = $site_properties['posts']) {
+    foreach ($posts as $post) {
+      generate_page_or_post($post, $site_properties);
+    }
+  }
+  
+  if ($pages = $site_properties['pages']) {
+    foreach ($pages as $page) {
+      generate_page_or_post($page, $site_properties);
+    }
+  }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 ////////// MAIN //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
@@ -415,12 +457,8 @@ if (should_update_site()) {
     $filenames = rscandir(POSTS_DIRECTORY);
     foreach ($filenames as $filename) {
       $post = get_post_properties($filename);
-      if (!empty($post))
-        $posts[] = $post;
-    }
-    
-    foreach ($posts as $post) {
-      generate_page_or_post($post);
+      if (!empty($post) && $post['published'])
+          $posts[] = $post;
     }
   }
   
@@ -431,14 +469,17 @@ if (should_update_site()) {
     $filenames = rscandir(PAGES_DIRECTORY);
     foreach ($filenames as $filename) {
       $page = get_page_properties($filename);
-      if (!empty($page))
-        $pages[] = $page;
-    }
-    
-    foreach ($pages as $page) {
-      generate_page_or_post($page);
+      if (!empty($page) && $page['published'])
+          $pages[] = $page;
     }
   }
+  
+  usort($posts, "reverse_chronological_cmp");
+  
+  generate_site(array(
+    'posts' => $posts,
+    'pages' => $pages
+  ));
   
 }
 
