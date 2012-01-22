@@ -18,12 +18,58 @@ To start using YAWL immediately, get a copy of YAWL at http://github.com/ianli/y
 In the YAWL directory, write your posts in the `_posts/` directory and your pages in the `_pages/` directory.
 
 
-Posts and Page Format
----------------------
+Pages and Posts
+---------------
 
+Content for a YAWL blog are called _pages_ and _posts_. Pages are just regular web pages, while posts are pages with a date. Pages and posts can be written in HTML, Textile, and PHP.
 
-Templates
----------
+Pages are placed in the `_pages/` directory, while posts are placed in the `_posts/` directory.
+
+### Front Matter
+
+Pages and posts contain a _front matter_. The front matter for HTML and Textile is at the top of the file and has the following format:
+
+```text
+---
+title:  Title of Post
+layout: default
+---
+```
+
+The front matter for PHP is different. Instead, you must assign an associative array to the variable `$front_matter`. For example:
+
+```php
+<?php
+  $front_matter = array(
+    'title'   => 'Title of Post',
+    'layout'  => 'default'
+  );
+?>
+```
+
+Layouts
+-------
+
+Layouts in YAWL are written in PHP and use RAFT to access variables to display. The following are the variables available to the layout:
+
+__Page Variables__
+
+| Variable | Description |
+| @page.layout@ | The layout used by the page |
+| @page.title@ | The title of the page |
+| @page.content@ | The content of the page |
+| @page.date@ | The date associated with the page |
+| @page.extension@ | The extension of the file from which this page was processed |
+| @page.year@ | The year of the page |
+| @page.month@ | The month of the page |
+| @page.day@ | The day of the page |
+| @page.content@ | The content of the page |
+
+__Site Variables__
+
+| Variable | Description |
+| @site.pages@ | All the _published_ pages processed by YAWL |
+| @site.posts@ | All the _published_ posts processed by YAWL. In reverse chronological order |
 
 
 File Structure
@@ -32,25 +78,41 @@ File Structure
 ```text
 yawl/
 
-  (ADD YOUR POSTS/PAGES HERE)
-  _posts/
-    # Posts are pages with an associated date. Processed by YAML.
-  _pages/
-    # Pages are not ordered chronologically. Processed by YAWL.
+    # Content creation
+    # Add posts and pages in these folders.
     
-  (OPTIONAL)
-  _layouts/
-    # Directory of RAFT layouts in PHP. A default is provided.
-  css/
-    # Directory of stylesheets. A default is provided.
-
-  (DO NOT MODIFY)
-  yawl.php
-    # Main PHP file that provides YAWL's functionality.
-  _site/
-    # Generated static files are stored here.
-  php/
-    # Contains PHP libraries that YAWL uses.
+    _posts/
+      # Posts are pages with an associated date. Processed by YAWL.
+      
+    _pages/
+      # Pages are not ordered chronologically. Processed by YAWL.
+    
+    # Content styling
+    # Add layouts and styles in these folders.
+    
+    _layouts/
+      # Directory of RAFT layouts in PHP. A default is provided.
+      
+    css/
+      # Directory of stylesheets. A default is provided.
+      
+    # Content publishing
+    # Posts and pages processed by YAWL are placed here.
+    
+    _site/
+      # Generated static files are stored here.
+      
+    .htaccess
+      # Apache settings to direct how URLs are handled.
+    
+    # YAWL platform
+    # Do not modify these unless you know what you are doing.
+    
+    yawl.php
+      # Main PHP file that provides YAWL's functionality.
+    
+    php/
+      # Contains PHP libraries that YAWL uses.
 ```
 
 
@@ -60,7 +122,7 @@ PHP Dependencies
 YAWL is dependent on the following PHP libraries:
 
 * [classTextile.php](http://code.google.com/p/textpattern/source/browse/development/4.x/textpattern/lib/classTextile.php?r=3359) by Dean Allen - Used to process posts and pages ending in `.textile`.
-* RAFT - Used for creating templates.
+* [RAFT](http://github.com/ianli/raft/) - Used for creating templates.
 
 
 Versioning
@@ -84,6 +146,18 @@ For more information on SemVer, please visit http://semver.org/.
 Versions
 --------
 
+*0.2.0* - January 22, 2012
+
+- Complete rewrite.
+- Removed dependency from JIFF.
+- More similar to Jekyll than previous versions
+-- Uses front matter.
+-- Properties are extracted from filenames.
+- Added support for PHP pages/posts.
+- Differentiated concepts between pages and posts.
+- Added `published` to the front matter to allow drafts.
+- Added reverse-chronological ordering of posts.
+
 *0.1.0*	- November 16, 2010
 
 - Class-based implementation.
@@ -97,6 +171,6 @@ Versions
 License
 -------
 
-Copyright 2010 Ian Li, http://ianli.com
+Copyright 2012 Ian Li, http://ianli.com
 
 Licensed under [the MIT license](http://www.opensource.org/licenses/mit-license.php).
