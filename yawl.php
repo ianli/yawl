@@ -16,13 +16,13 @@ date_default_timezone_set('America/New_York');
 
 include_once('php/raft.php');
 include_once('php/classTextile.php');
+include_once('php/markdown.php');
 
 
 /* TODO:
  * Support the following template variables:
  * Site
- * - site.time
- * - site.posts
+ * X site.posts
  * - site.categories.CATEGORY
  * - site.tags.TAG
  *
@@ -55,6 +55,12 @@ define('PAGES_DIRECTORY', '_pages');
 ////////// UTILITY FUNCTIONS /////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+// Merges an unspecified number of arrays together.
+// Similar to array_merge in that it values of a key from an array 
+// are overridden by values of a similar key from subsequent arrays.
+// However, it differs in that if the value of the key is an array,
+// values of a similar key from subsequent arrays are also arrays,
+// the values are merged.
 function array_merge_special() {
   $merged = array();
   
@@ -80,6 +86,8 @@ function array_merge_special() {
   return $merged;
 }
 
+// Compares the `date` elements of the $a and $b.
+// Used by YAWL to sort posts by reverse chronological order.
 function reverse_chronological_cmp($a, $b) {
   if ($a['date'] == $b['date']) {
     return 0;
@@ -320,7 +328,7 @@ function get_front_matter_and_content($file) {
   // * i - case-insensitive
   // * m - multi-line 
   // * s - . includes newlines
-  if (preg_match('/^---$(.+)^---$(.+)/ims', $file, $matches)) {
+  if (preg_match('/^---\n(.+)^---\n(.+)/ims', $file, $matches)) {
     list(, $front_matter, $content) = $matches;
     
     return array($front_matter, $content);
@@ -396,19 +404,30 @@ function generate_page_or_post($page_properties, $site_properties) {
   }
   
   // Set the content based on the extension.
+  $content = '';
+  
   switch ($page_properties['extension']) {
     case 'php':
       ob_start();
       $page_properties['content']();
-      $raft['page.content'] = ob_get_contents();
+      $content = ob_get_contents();
       ob_end_clean();
+      break;
+    case 'textile':
+      $textile = new Textile();
+      $content = $textile->TextileThis($page_properties['content']);
+      break;
+    case 'markdown':
+      $content = Markdown($page_properties['content']);
       break;
     case 'html':
     case 'htm':
     default:
-      $raft['page.content'] = $page_properties['content'];
+      $content = $page_properties['content'];
       break;
   }
+  
+  $raft['page.content'] = $content;
   
   // Generate the page.
   ob_start();
