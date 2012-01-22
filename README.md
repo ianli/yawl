@@ -1,9 +1,66 @@
 YAWL Ain't Web Logs
 ===================
 
-YAWL is a very simple blogging platform. It has the following features:
-* YAWL reads a directory of JIFF files, then generates a recent file and an archive file (both in JSON). The recent and archive files are rendered as indices to blog posts.
-* YAWL uses JIFF as the file format for posts.
+YAWL is a very simple blogging platform in PHP.
+
+YAWL is similar to [Jekyll](https://github.com/mojombo/jekyll) by Tom Preston-Werner in the following ways:
+
+* People write posts and in plain text files.
+* Text files have front matter that are parsed for key-value pairs that can be used in templates.
+* Posts and pages are converted into static files.
+
+
+Quick Start
+-----------
+
+To start using YAWL immediately, get a copy of YAWL at http://github.com/ianli/yawl and put the directory anywhere under the document root of your web site. If your document root is at `document_root/` and you put `yawl/` right underneath, your YAWL blog is available at `http://example.com/yawl/`. You can rename the directory if you want.
+
+In the YAWL directory, write your posts in the `_posts/` directory and your pages in the `_pages/` directory.
+
+
+Posts and Page Format
+---------------------
+
+
+Templates
+---------
+
+
+File Structure
+--------------
+
+```text
+yawl/
+
+  (ADD YOUR POSTS/PAGES HERE)
+  _posts/
+    # Posts are pages with an associated date. Processed by YAML.
+  _pages/
+    # Pages are not ordered chronologically. Processed by YAWL.
+    
+  (OPTIONAL)
+  _layouts/
+    # Directory of RAFT layouts in PHP. A default is provided.
+  css/
+    # Directory of stylesheets. A default is provided.
+
+  (DO NOT MODIFY)
+  yawl.php
+    # Main PHP file that provides YAWL's functionality.
+  _site/
+    # Generated static files are stored here.
+  php/
+    # Contains PHP libraries that YAWL uses.
+```
+
+
+PHP Dependencies
+----------------
+
+YAWL is dependent on the following PHP libraries:
+
+* [classTextile.php](http://code.google.com/p/textpattern/source/browse/development/4.x/textpattern/lib/classTextile.php?r=3359) by Dean Allen - Used to process posts and pages ending in `.textile`.
+* RAFT - Used for creating templates.
 
 
 Versioning
