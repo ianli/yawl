@@ -127,8 +127,9 @@ PHP Dependencies
 
 YAWL is dependent on the following PHP libraries:
 
-* [classTextile.php](http://code.google.com/p/textpattern/source/browse/development/4.x/textpattern/lib/classTextile.php?r=3359) by Dean Allen - Used to process posts and pages ending in `.textile`.
 * [RAFT](http://github.com/ianli/raft/) - Used for creating templates.
+* [classTextile.php](http://code.google.com/p/textpattern/source/browse/development/4.x/textpattern/lib/classTextile.php?r=3359) by Dean Allen - Used to process posts and pages ending in `.textile`.
+* [PHP Markdown](http://michelf.com/projects/php-markdown/) by Michel Fortin - Used to process posts and pages ending in `.markdown` or `.md`.
 
 
 Versioning
@@ -163,6 +164,9 @@ Versions
 - Differentiated concepts between pages and posts.
 - Added `published` to the front matter to allow drafts.
 - Added reverse-chronological ordering of posts.
+- Added support for PHP pages.
+- Added support for Textile pages.
+- Added support for Markdown pages.
 
 *0.1.0*	- November 16, 2010
 
