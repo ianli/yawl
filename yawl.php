@@ -1,10 +1,11 @@
 <?php
 /*!
  * YAWL Ain't Web Logs
+ * http://github.com/ianli/yawl/
  *
  * A very simple blogging platform in PHP.
  *
- * Copyright (c) 2012 Ian Li, http://ianli.com
+ * Copyright 2012 Ian Li, http://ianli.com
  * Licensed under the MIT License (http://www.opensource.org/licenses/mit-license.php).
  */
 
@@ -17,6 +18,28 @@ include_once('php/raft.php');
 include_once('php/classTextile.php');
 
 
+/* TODO:
+ * Support the following template variables:
+ * Site
+ * - site.time
+ * - site.posts
+ * - site.categories.CATEGORY
+ * - site.tags.TAG
+ *
+ * Page
+ * - page.url
+ * - page.content
+ *
+ * Post
+ * - post.title
+ * - post.url
+ * - post.date
+ * - post.id
+ * - post.categories
+ * - post.tags
+ * - post.content
+ */
+
 //////////////////////////////////////////////////////////////////////////////
 ////////// CONFIGURATIONS ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -26,6 +49,36 @@ define('SITE_DIRECTORY', '_site');
 define('POSTS_DIRECTORY', '_posts');
 
 define('PAGES_DIRECTORY', '_pages');
+
+
+//////////////////////////////////////////////////////////////////////////////
+////////// UTILITY FUNCTIONS /////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+function array_merge_special() {
+  $merged = array();
+  
+  $arrays = func_get_args();
+  foreach ($arrays as $array) {
+    foreach ($array as $key => $value) {
+      if (is_array($value)) {
+        if (array_key_exists($key, $merged)) {
+          if (is_array($merged[$key])) {
+            $merged[$key] = array_merge($merged[$key], $value);
+          } else {
+            $merged[$key] = $value;
+          }
+        } else {
+          $merged[$key] = $value;
+        }
+      } else {
+        $merged[$key] = $value;
+      }
+    }
+  }
+  
+  return $merged;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -97,12 +150,23 @@ function get_page_properties($filename) {
   
   if (empty($filename_properties)) {
     return array();
-  } else {
-    // Default properties
-	  $default_properties = array(
-      'layout'    => 'default',
-      'published' => true
-    );
+  }
+  
+  // If we get to this point, then there are values to `filename_properties`
+  
+  // Default properties
+  $default_properties = array(
+    'layout'    => 'default',
+    'published' => true
+  );
+  
+  if ($filename_properties['extension'] == 'php') {
+    
+    // PHP file must generate values 
+    // for $front_matter_properties and $content
+    include($filename);
+    
+  } else {    
     
     $post = file_get_contents($filename);
     
@@ -111,14 +175,14 @@ function get_page_properties($filename) {
     
     // Properties from the front matter.
     $front_matter_properties = get_front_matter_properties($front_matter);
-    
-    // Merge the properties.
-    return array_merge_recursive(
-              $default_properties,
-              $filename_properties,
-              $front_matter_properties,
-              array('content' => $content)); 
   }
+  
+  // Merge the properties.
+  return array_merge_special(
+          $default_properties,
+          $filename_properties,
+          $front_matter_properties,
+          array('content' => $content));
 }
 
 function get_page_filename_properties($filename) {
@@ -153,13 +217,19 @@ function get_page_filename_properties($filename) {
   }
 }
 
-function generate_page($properties) {
+function generate_page_or_post($properties) {
   global $raft;
   
   $raft = $properties;
   
   // Set the content based on the extension.
   switch ($properties['extension']) {
+    case 'php':
+      ob_start();
+      $properties['content']();
+      $raft['content'] = ob_get_contents();
+      ob_end_clean();
+      break;
     case 'html':
     case 'htm':
     default:
@@ -182,31 +252,6 @@ function generate_page($properties) {
 //////////////////////////////////////////////////////////////////////////////
 ////////// POST FUNCTIONS ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
-function generate_post($properties) {
-  global $raft;
-  
-  $raft = $properties;
-  
-  // Set the content based on the extension.
-  switch ($properties['extension']) {
-    case 'html':
-    case 'htm':
-    default:
-      $raft['content'] = $properties['content'];
-      break;
-  }
-  
-  // Generate the page.
-  ob_start();
-  include('_layouts/' . $raft['layout'] . '.php');
-  $html = ob_get_contents();
-  ob_end_clean();
-  
-  // Store the page.
-  $permalink = $properties['permalink'];
-  file_put_contents("_site/$permalink", $html);
-}
 
 // Process the post.
 function get_post_properties($filename) {
@@ -231,7 +276,7 @@ function get_post_properties($filename) {
     $front_matter_properties = get_front_matter_properties($front_matter);
     
     // Merge the properties.
-    return array_merge_recursive(
+    return array_merge(
               $default_properties,
               $filename_properties,
               $front_matter_properties,
@@ -241,6 +286,7 @@ function get_post_properties($filename) {
 
 // Get properties from the filename.
 function get_post_filename_properties($filename) {
+  // TODO: Add one-level subfolder used as category
   $regex = "/^" 
             . POSTS_DIRECTORY . "\/"
             . "(((\d{4})\-(\d{2})\-(\d{2}))\-([a-z0-9-_]+))"
@@ -304,13 +350,12 @@ function get_front_matter_properties($front_matter) {
   $properties = array();
   
   // Match keys and values.
-  if (preg_match_all('/^([a-z0-9_]+):(.+)$/im', $front_matter, $matches)) {
+  if (preg_match_all('/^([a-z0-9_]+)\s*:\s*(.+)$/im', $front_matter, $matches)) {
     list(, $keys, $values) = $matches;
     
     $properties = array_combine($keys, $values);
     
-    foreach ($properties as $key => $value) {
-      
+    foreach ($properties as $key => $value) {      
       switch ($key) {
         case 'published':
           $published = $properties['published'];
@@ -375,7 +420,7 @@ if (should_update_site()) {
     }
     
     foreach ($posts as $post) {
-      generate_post($post);
+      generate_page_or_post($post);
     }
   }
   
@@ -391,7 +436,7 @@ if (should_update_site()) {
     }
     
     foreach ($pages as $page) {
-      generate_page($page);
+      generate_page_or_post($page);
     }
   }
   
