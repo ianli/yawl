@@ -1,7 +1,7 @@
 <?php
 
   $front_matter = array(
-    'title' => 'YAWL &amp; Others!'
+    'title' => 'Boats etc.'
   );
   
   $content = function () {
