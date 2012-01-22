@@ -418,6 +418,7 @@ function generate_page_or_post($page_properties, $site_properties) {
       $content = $textile->TextileThis($page_properties['content']);
       break;
     case 'markdown':
+    case 'md':
       $content = Markdown($page_properties['content']);
       break;
     case 'html':
