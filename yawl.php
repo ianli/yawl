@@ -343,8 +343,14 @@
 	////////// MAIN ////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////
 	
-	if (filemtime(SITE_DIRECTORY) < contents_last_modified(POSTS_DIRECTORY)
-	    || array_key_exists('update', $_GET)) {
+	function should_update_site() {
+	  return filemtime(SITE_DIRECTORY) < contents_last_modified(getcwd())
+            || array_key_exists('update', $_GET);
+	}
+	
+	if (should_update_site()) {
+	  
+	  // IMPORTANT: We're updating the _site/ directory, so clear it.
 	  empty_directory(SITE_DIRECTORY);
 
     // Process the posts.
@@ -363,7 +369,7 @@
       }
     }
     
-    // Process generate the pages.
+    // Process the pages.
     if (is_dir(PAGES_DIRECTORY)) {
       $pages = array();
       
@@ -378,11 +384,15 @@
         generate_page($page);
       }
     }
+    
   }
-     
-  $request = $_GET['n'];
   
-  if (preg_match("/^_site\/.+$/i", $request, $matches)) {
+  // Get the user's request.
+  $request = (array_key_exists('n', $_GET)) 
+              ? $_GET['n'] 
+              : SITE_DIRECTORY . '/index.html';
+  
+  if (preg_match("/^" . SITE_DIRECTORY . "\/.+$/i", $request, $matches)) {
     if (file_exists($request)) {
       $file = file_get_contents($request);
       
