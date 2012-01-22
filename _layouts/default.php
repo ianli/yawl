@@ -22,7 +22,7 @@
   <div class="row">
     <div class="offset3 span10">
       <div class="hero-unit">
-        <h1>YAWL <span>&amp; Others!</span></h1>
+        <h1>Boats etc.</h1>
         <p>
           A demo of <a href="http://github.com/ianli/yawl/">YAWL</a>,
           a very simple blogging platform in PHP.
