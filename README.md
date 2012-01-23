@@ -153,6 +153,11 @@ For more information on SemVer, please visit http://semver.org/.
 Versions
 --------
 
+*0.3.0pre* - Pending (started January 23, 2012)
+
+- Added support for categories. A post can belong to a category.
+- Changed .htaccess to pass all requests ending in .html to YAWL.
+
 *0.2.0* - January 22, 2012
 
 - Complete rewrite.

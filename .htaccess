@@ -6,16 +6,13 @@ RewriteEngine On
 # If request is blank, then treat it as index.html
 RewriteRule ^$  index.html [qsappend]
 
-# All requests that end in HTML are retrieved from the _site/ directory.
-RewriteRule ^(.+\.html)$  _site/$1 [qsappend]
-
-# YAWL will retrieve the file from the _site/ directory.
-RewriteRule ^(_site\/.+)$ yawl.php?n=$1 [qsappend,last]
+# YAWL will process all requests ending in .html.
+RewriteRule ^(.+\.html)$  yawl.php?n=$1 [qsappend,last]
 
 
 # Static file handling by Apache
 # ------------------------------
-#      
+# 
 # # If file exists, display and ignore all rewrites.
 # RewriteCond %{REQUEST_FILENAME} !-f
 # 

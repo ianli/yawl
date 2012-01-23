@@ -14,7 +14,7 @@
 	<!-- Bootstrap -->
 	<link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css" />
 	
-	<link rel="stylesheet" href="css/default.css" type="text/css" />
+	<link rel="stylesheet" href="/yawl/css/default.css" type="text/css" />
 </head>
 <body>
 
@@ -33,7 +33,7 @@
         <div class="offset1 span8">
           <ul class="pills">
             <li class="<?= raft('page.permalink') == 'index.html' ? 'active' : '' ?>">
-              <a href="./">Home</a>
+              <a href="/yawl/">Home</a>
             </li>
           </ul>
         </div>

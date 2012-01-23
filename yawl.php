@@ -1,6 +1,7 @@
 <?php
 /*!
  * YAWL Ain't Web Logs
+ * Version 0.3.0pre
  * http://github.com/ianli/yawl/
  *
  * A very simple blogging platform in PHP.
@@ -31,13 +32,13 @@ include_once('php/markdown.php');
  * - page.content
  *
  * Post
- * - post.title
+ * X post.title
  * - post.url
- * - post.date
+ * X post.date
  * - post.id
  * - post.categories
  * - post.tags
- * - post.content
+ * X post.content
  */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -207,7 +208,7 @@ function get_page_properties($filename) {
 }
 
 function get_page_filename_properties($filename) {
-  $regex = "/^" 
+  $regex = "/^"
             . PAGES_DIRECTORY . "\/"
             . "(([a-z0-9-_]+))"
             . "\."
@@ -280,27 +281,30 @@ function get_post_properties($filename) {
 function get_post_filename_properties($filename) {
   // TODO: Add one-level subfolder used as category
   $regex = "/^" 
-            . POSTS_DIRECTORY . "\/"
+            . POSTS_DIRECTORY . "\/"    # Posts are in POSTS_DIRECTORY
+            . "(([a-z0-9-_]+)\/)?"        # Posts can be in a subfolder
             . "(((\d{4})\-(\d{2})\-(\d{2}))\-([a-z0-9-_]+))"
             . "\."
             . "([a-z0-9]+)"
             . "$/i";
   
   if (preg_match($regex, $filename, $matches)) {
-	  list(, $permalink, $date, $year, $month, $day, $title, $extension) = $matches;
-	  
-	  $extension = strtolower($extension);
-	  
-	  $permalink = "$permalink.html";
+    list(, $category_dir, $category, $permalink, $date, $year, $month, $day, $title, $extension) = $matches;
+    
+    $permalink = "$category_dir$permalink.html";
+    
+    $date = strtotime($date);
 	  
 	  $title = implode(' ', array_map('ucfirst', explode('-', $title)));
 	  
-    $date = strtotime($date);
+	  $extension = strtolower($extension);
 	  
     return array(
       // Values extracted from the filename:
       
       'permalink' => $permalink,
+      
+      'filename'  => $filename,
       
       'extension' => $extension,
       
@@ -309,7 +313,9 @@ function get_post_filename_properties($filename) {
       'month'     => $month,
       'day'       => $day,
       
-      'title'     => $title
+      'title'     => $title,
+      
+      'category' => $category
     );   
   } else {
     return array();
@@ -438,7 +444,21 @@ function generate_page_or_post($page_properties, $site_properties) {
   
   // Store the page.
   $permalink = $page_properties['permalink'];
-  file_put_contents("_site/$permalink", $html);
+  $category = $page_properties['category'];
+  if ($category) {
+    $dir = SITE_DIRECTORY . "/$category";
+    
+    if (!file_exists($dir)) {
+      mkdir($dir);
+    }
+    
+    if (is_dir($dir)) {
+      file_put_contents(SITE_DIRECTORY . "/$permalink", $html);
+    }
+    
+  } else {
+    file_put_contents(SITE_DIRECTORY . "/$permalink", $html);
+  }
 }
 
 function generate_site($site_properties) {
@@ -506,15 +526,16 @@ if (should_update_site()) {
 // Get the user's request.
 $request = (array_key_exists('n', $_GET)) 
             ? $_GET['n'] 
-            : SITE_DIRECTORY . '/index.html';
+            : 'index.html';
 
-if (preg_match("/^" . SITE_DIRECTORY . "\/.+$/i", $request, $matches)) {
-  if (file_exists($request)) {
-    $file = file_get_contents($request);
-    
+# Process requests of the form "(category/)filename.html"
+if (preg_match("/^([a-z0-9-_]+\/)?([a-z0-9-_]+)\.html/i", $request, $matches)) {
+  $filename = SITE_DIRECTORY . "/$request";
+  if (file_exists($filename)) {
+    $file = file_get_contents($filename);     
     echo $file;
   } else {
-    echo "File, $request, not found";
+    echo "File, $filename, not found";
   }
 } else {
   echo "Invalid $request";
